@@ -1,7 +1,8 @@
 package com.jenga_marketplace.jenga_backend.model;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,11 +43,13 @@ public class Product {
     // Relationship to Category (Many Products -> One Category)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "products"})
     private Category category;
 
     // Relationship to User (Many Products -> One Seller)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "products", "password"})
     private User seller;
 
     @Column(name = "image_url", length = 255)
@@ -64,3 +67,9 @@ public class Product {
         this.createdAt = LocalDateTime.now();
     }
 }
+/* Why we did this:
+hibernateLazyInitializer: Prevents Spring from crashing when trying to fetch data that hasn't been loaded yet.
+
+products: Stops the loop where Product -> Category -> Product -> Category...
+
+password: Crucial for Jenga Marketplace security. You never want to send the seller's password to the frontend! */

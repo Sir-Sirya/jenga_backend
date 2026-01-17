@@ -3,7 +3,9 @@ com\jenga_marketplace\jenga_backend\model\Category.class
 com\jenga_marketplace\jenga_backend\service\UserService.class
 com\jenga_marketplace\jenga_backend\model\OrderItem.class
 com\jenga_marketplace\jenga_backend\controller\AuthController.class
+com\jenga_marketplace\jenga_backend\controller\ProductApiController.class
 com\jenga_marketplace\jenga_backend\model\Order.class
+com\jenga_marketplace\jenga_backend\repository\ProductRepository.class
 com\jenga_marketplace\jenga_backend\model\dto\LoginRequest.class
 com\jenga_marketplace\jenga_backend\controller\UserController.class
 com\jenga_marketplace\jenga_backend\config\SecurityConfig.class

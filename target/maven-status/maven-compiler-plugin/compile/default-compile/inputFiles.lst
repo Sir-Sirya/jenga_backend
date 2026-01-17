@@ -1,6 +1,7 @@
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\config\PasswordConfig.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\config\SecurityConfig.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\controller\AuthController.java
+C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\controller\ProductApiController.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\controller\ProtectedController.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\controller\UserController.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\JengaBackendApplication.java
@@ -14,6 +15,7 @@ C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\model\OrderItem.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\model\Product.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\model\User.java
+C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\repository\ProductRepository.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\repository\UserRepository.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\security\JwtUtil.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\service\AuthService.java
