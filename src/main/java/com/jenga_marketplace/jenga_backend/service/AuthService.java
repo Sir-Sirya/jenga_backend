@@ -1,14 +1,16 @@
 package com.jenga_marketplace.jenga_backend.service;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.jenga_marketplace.jenga_backend.model.User;
-import com.jenga_marketplace.jenga_backend.model.User.Role; // Ensure Role enum is accessible
+import com.jenga_marketplace.jenga_backend.model.User.Role;
 import com.jenga_marketplace.jenga_backend.model.dto.LoginRequest;
 import com.jenga_marketplace.jenga_backend.model.dto.RegisterRequest;
 import com.jenga_marketplace.jenga_backend.repository.UserRepository;
@@ -27,43 +29,58 @@ public class AuthService {
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    // ADD THIS METHOD - It was missing in your last snippet!
+    /**
+     * Specialized Register: Captures SME Business metadata and Tax Buffer fields.
+     */
     public ResponseEntity<?> register(RegisterRequest request) {
         Optional<User> existing = userRepository.findByEmail(request.getEmail());
         if (existing.isPresent()) {
             return ResponseEntity.badRequest().body("Email already in use");
         }
 
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPhone(request.getPhone());
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        // Build the user with SME fields
+        User user = User.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .phone(request.getPhone())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .businessName(request.getBusinessName()) // SME Differentiator
+                .businessType(request.getBusinessType())
+                .kraPin(request.getKraPin()) // Tax Buffer Logic
+                .verified(false) // Default to unverified until admin review
+                .build();
 
-        // Set default role or one from request
+        // Handle Role Assignment
         if (request.getRole() != null) {
-            user.setRole(Role.valueOf(request.getRole().toUpperCase()));
+            try {
+                user.setRole(Role.valueOf(request.getRole().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                user.setRole(Role.BUYER);
+            }
         } else {
             user.setRole(Role.BUYER);
         }
 
         userRepository.save(user);
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.ok("User registered successfully. Welcome to Jenga!");
     }
 
+    /**
+     * Professional Login: Returns JWT + Full User Object for AuthContext sync.
+     */
     public ResponseEntity<?> login(LoginRequest request) {
-        Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
-        
-        if (userOpt.isEmpty() || !passwordEncoder.matches(request.getPassword(), userOpt.get().getPasswordHash())) {
-            return ResponseEntity.status(401).body("Invalid email or password");
-        }
-
+    Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
+    
+    if (userOpt.isPresent() && passwordEncoder.matches(request.getPassword(), userOpt.get().getPasswordHash())) {
         String token = jwtUtil.generateToken(userOpt.get().getEmail());
-
-        return ResponseEntity.ok(Map.of(
-            "token", token,
-            "message", "Login successful",
-            "role", userOpt.get().getRole()
-        ));
+        
+        // Return full user object for the "Please Log In" fix
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("user", userOpt.get()); 
+        
+        return ResponseEntity.ok(response);
+    }
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
 }

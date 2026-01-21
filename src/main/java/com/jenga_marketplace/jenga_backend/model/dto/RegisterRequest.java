@@ -1,27 +1,38 @@
 package com.jenga_marketplace.jenga_backend.model.dto;
 
-// Note: For a proper Spring Boot app, you should use private fields 
-// and explicit getters/setters (or Lombok)
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * Final DTO for Jenga Marketplace Registration.
+ * Captures standard user data plus SME-specific business metadata.
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegisterRequest {
+
+    // --- Standard User Fields ---
     private String name;
     private String email;
     private String password;
     private String phone;
-    private String role; // BUYER or SELLER or ADMIN
+    private String role; // BUYER or SELLER
 
-    // Getters and Setters
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    // --- SME Business Strategy Fields ---
+    
+    // Captures the shop name (e.g., "Nyamakima Hardware")
+    private String businessName;
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    // Identifies if they are a Sole Proprietor or Limited Company
+    private String businessType;
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    // The 'Tax Buffer' field - Optional KRA PIN for the Private Estimator
+    private String kraPin;
 
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
-
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    // Physical shop location for the "Verified" badge process
+    private String shopLocation;
 }

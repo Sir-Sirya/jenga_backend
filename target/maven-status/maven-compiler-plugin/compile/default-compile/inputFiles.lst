@@ -20,6 +20,7 @@ C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\repository\CategoryRepository.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\repository\ProductRepository.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\repository\UserRepository.java
+C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\security\JwtFilter.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\security\JwtUtil.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\service\AuthService.java
 C:\Users\Administrator\Desktop\Jenga Proj\jenga_backend\src\main\java\com\jenga_marketplace\jenga_backend\service\UserService.java

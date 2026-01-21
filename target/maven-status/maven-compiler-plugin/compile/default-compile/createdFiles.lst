@@ -2,6 +2,7 @@ com\jenga_marketplace\jenga_backend\model\User.class
 com\jenga_marketplace\jenga_backend\model\OrderItem.class
 com\jenga_marketplace\jenga_backend\controller\AuthController.class
 com\jenga_marketplace\jenga_backend\repository\ProductRepository.class
+com\jenga_marketplace\jenga_backend\model\dto\RegisterRequest$RegisterRequestBuilder.class
 com\jenga_marketplace\jenga_backend\model\dto\LoginRequest.class
 com\jenga_marketplace\jenga_backend\controller\UserController.class
 com\jenga_marketplace\jenga_backend\model\dto\RegisterRequest.class
@@ -21,7 +22,9 @@ com\jenga_marketplace\jenga_backend\controller\ProductApiController.class
 com\jenga_marketplace\jenga_backend\model\Order.class
 com\jenga_marketplace\jenga_backend\config\SecurityConfig.class
 com\jenga_marketplace\jenga_backend\model\dto\ProductRequest.class
+com\jenga_marketplace\jenga_backend\security\JwtFilter.class
 com\jenga_marketplace\jenga_backend\model\Product.class
+com\jenga_marketplace\jenga_backend\model\User$UserBuilder.class
 com\jenga_marketplace\jenga_backend\controller\CategoryController.class
 com\jenga_marketplace\jenga_backend\controller\ProtectedController.class
 com\jenga_marketplace\jenga_backend\model\Category$CategoryBuilder.class

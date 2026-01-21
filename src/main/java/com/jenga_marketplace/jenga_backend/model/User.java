@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
@@ -17,13 +18,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "users") // Matches ERD table name
-@Getter @Setter @NoArgsConstructor
+@Table(name = "users")
+@Getter 
+@Setter 
+@NoArgsConstructor 
+@AllArgsConstructor 
+@Builder // Enables fluent API for creating user objects
 public class User {
 
     @Id
@@ -36,40 +43,55 @@ public class User {
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
+    @JsonIgnore // Security: Never send password hashes in API responses
     @JsonProperty("password_hash")
-    @Column(name = "password_hash", nullable = false) // Matches ERD column name
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
+
+    @Column(length = 30)
+    private String phone;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    @Column(length = 30)
-    private String phone;
- 
+    // --- SME BUSINESS FIELDS (STRATEGIC) ---
+
+    @Column(name = "business_name", length = 150)
+    private String businessName;
+
+    @Column(name = "business_type")
+    private String businessType; // e.g., 'Sole Proprietorship'
+
+    @Column(name = "shop_location")
+    private String shopLocation;
+
+    @JsonIgnore // Buffer Logic: Keep KRA PIN strictly private to the backend
+    @Column(name = "kra_pin_hidden", length = 50)
+    private String kraPin;
+
+    @Builder.Default
+    @Column(name = "is_verified")
+    private boolean verified = false;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;
 
-    // --- RELATIONSHIPS (Inverse side) ---
+    // --- RELATIONSHIPS ---
 
-    // A user (seller) can have many products
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<Product> products;
 
-    // A user can have many items in their cart
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
 
-    // A user can have many favorite products
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Favorite> favorites;
 
-    // A user can have many orders
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders;
 
-    // Enum for roles
     public enum Role {
         BUYER, SELLER, ADMIN
     }
