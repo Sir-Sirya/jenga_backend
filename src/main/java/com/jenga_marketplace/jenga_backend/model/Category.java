@@ -1,8 +1,11 @@
 package com.jenga_marketplace.jenga_backend.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -11,9 +14,13 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,32 +31,46 @@ import lombok.Setter;
 @Setter 
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder // Allows for easier object creation in tests
 public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotBlank(message = "Category name is required")
     @Column(nullable = false, length = 100)
     private String name;
 
     @Column(unique = true, length = 100)
     private String slug;
 
-    // --- NEW UI ENHANCEMENT FIELDS ---
-
     @Column(name = "icon_name", length = 100)
-    private String iconName; // Stores Lucide icon names like 'hammer' or 'zap'
+    private String iconName;
 
     @Column(name = "image_url")
-    private String imageUrl; // High-quality Unsplash links
+    private String imageUrl;
 
     @Column(name = "is_featured")
-    private boolean featured; // Helps highlight top categories on the homepage
+    private boolean featured;
+
+    // --- HIERARCHY (SUBCATEGORIES) ---
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    @JsonBackReference // Stops infinite loops when looking up parents
+    private Category parent;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @JsonManagedReference // Properly serializes the list of children
+    private List<Category> subCategories = new ArrayList<>();
 
     // --- RELATIONSHIPS ---
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("category") // Prevents the API from crashing during JSON conversion
+    @JsonIgnoreProperties("category") 
     private List<Product> products;
 }
+
+
