@@ -3,9 +3,7 @@ package com.jenga_marketplace.jenga_backend.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -31,7 +29,7 @@ import lombok.Setter;
 @Setter 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder // Allows for easier object creation in tests
+@Builder
 public class Category {
 
     @Id
@@ -54,23 +52,21 @@ public class Category {
     @Column(name = "is_featured")
     private boolean featured;
 
-    // --- HIERARCHY (SUBCATEGORIES) ---
+    // --- HIERARCHY (Self-Referencing for Mega-Menu) ---
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
-    @JsonBackReference // Stops infinite loops when looking up parents
+    @JsonIgnoreProperties("subCategories") // Prevents infinite recursion during serialization
     private Category parent;
 
     @Builder.Default
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    @JsonManagedReference // Properly serializes the list of children
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("parent") // Allows the menu to see children but not loop back to the parent
     private List<Category> subCategories = new ArrayList<>();
 
-    // --- RELATIONSHIPS ---
+    // --- PRODUCT RELATIONSHIP ---
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("category") 
+    @JsonIgnoreProperties("category") // Essential to stop infinite loops between Product and Category
     private List<Product> products;
 }
-
-
