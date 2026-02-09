@@ -16,6 +16,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.jenga_marketplace.jenga_backend.security.JwtFilter;
 import com.jenga_marketplace.jenga_backend.security.JwtUtil;
 
+/**
+ * SecurityConfig: The gatekeeper for the Jenga Marketplace.
+ * Manages access control, JWT validation, and Cross-Origin Resource Sharing (CORS).
+ */
 @Configuration
 public class SecurityConfig {
 
@@ -28,32 +32,65 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            // Link the specific CORS bean defined below to prevent 403 blocks
+            .csrf(csrf -> csrf.disable()) // Stateless APIs do not require CSRF
+            
+            /**
+             * CORS CONFIGURATION:
+             * Linked to the bean below to resolve '403 Forbidden' pre-flight errors.
+             */
             .cors(Customizer.withDefaults()) 
+            
             .authorizeHttpRequests(auth -> auth
-                // Public paths for onboarding and browsing hardware
+                /**
+                 * PUBLIC ACCESS: 
+                 * Permitting auth, products, and categories ensures buyers can browse 
+                 * and new SMEs can register without a token.
+                 */
                 .requestMatchers("/api/auth/**", "/api/products/**", "/api/categories/**").permitAll()
-                // Private path for the SME Tax Buffer and Profile
+                
+                /**
+                 * SECURE ACCESS: 
+                 * Requires a valid JWT to access sensitive SME metadata or POS cart logic.
+                 */
                 .requestMatchers("/api/users/me").authenticated() 
+                .requestMatchers("/api/cart/**").authenticated() 
+                
                 .anyRequest().authenticated() 
             )
+            
+            /**
+             * STATELESS SESSION: 
+             * Prevents sticky sessions by relying entirely on JWT validation.
+             */
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            // The critical bridge: validates the JWT before Spring checks authorization
+            
+            /**
+             * THE JWT BRIDGE: 
+             * Validates the bearer token before Spring evaluates authorization.
+             */
             .addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     /**
-     * Define exactly which frontends can talk to this backend.
-     * This fixes the "CORS/Forbidden" issues seen in your console.
+     * CORS CONFIGURATION:
+     * Fixes "No 'Access-Control-Allow-Origin' header" errors.
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Allow both your Vite and production ports
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:8081"));
+        
+        /**
+         * FIX: Added local IP address to allowed origins.
+         * This resolves the CORS block occurring at http://192.168.1.11:8081.
+         */
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:5173", 
+            "http://localhost:8081",
+            "http://192.168.1.11:8081" 
+        ));
+        
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control"));
         configuration.setAllowCredentials(true);

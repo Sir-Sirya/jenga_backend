@@ -42,6 +42,7 @@ public class AuthService {
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
+                .nationality(request.getNationality())
                 .phone(request.getPhone())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .businessName(request.getBusinessName()) // SME Differentiator

@@ -43,6 +43,9 @@ public class User {
     @Column(nullable = false, unique = true, length = 150)
     private String email;
 
+    @Column(nullable = false, length=200)
+    private String nationality;
+
     @JsonIgnore // Security: Never send password hashes in API responses
     @JsonProperty("password_hash")
     @Column(name = "password_hash", nullable = false)

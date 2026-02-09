@@ -4,49 +4,49 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+/**
+ * CartItem: Maps the bridge between Users and Products in the 'cart_items' table.
+ */
 @Entity
 @Table(name = "cart_items")
-@Getter 
-@Setter 
-@NoArgsConstructor 
+@Data
+@NoArgsConstructor // Required for JPA hydration
 @AllArgsConstructor
 public class CartItem {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relationship to User: Many cart items belong to one user
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Relationship to Product: Many cart items can reference the same product
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(nullable = false)
     private Integer quantity;
 
-    @Column(name = "added_at", updatable = false)
-    private LocalDateTime addedAt;
+    @Column(name = "added_at")
+    private LocalDateTime addedAt = LocalDateTime.now();
 
-    @PrePersist
-    protected void onAdded() {
+    /**
+     * CONSTRUCTOR FIX: Explicitly defined to resolve the 'No Suitable Constructor' error.
+     */
+    public CartItem(User user, Product product, Integer quantity) {
+        this.user = user;
+        this.product = product;
+        this.quantity = quantity;
         this.addedAt = LocalDateTime.now();
     }
 }

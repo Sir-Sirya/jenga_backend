@@ -21,6 +21,8 @@ public class RegisterRequest {
     private String password;
     private String phone;
     private String role; // BUYER or SELLER
+    private String nationality;
+
 
     // --- SME Business Strategy Fields ---
     
